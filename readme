@@ -1,0 +1,37 @@
+read_u32
+
+big endian format
+
+fread(void *buffer, size_t size, size_t count, FILE *stream);
+buffer: A pointer to the memory block where the data read from the file will be stored.
+size: The size of each element to be read, in bytes.
+count: The number of elements to read.
+stream: A pointer to the FILE object representing the input file stream
+
+bytes[0] (the first byte read) is shifted left by 24 bits (becoming the most significant byte).
+bytes[1] is shifted left by 16 bits.
+bytes[2] is shifted left by 8 bits.
+bytes[3] (the last byte read) is not shifted (its the least significant byte).
+
+If the file contains the bytes (in order):
+0x12 0x34 0x56 0x78, the function returns:
+0x12345678 (a 32-bit integer with value 305419896).
+
+read_type
+reads 4 bytes from the file and stores them in a character array.
+If the read fails, it fills the array with "????" to indicate an error.
+    type[4] = '\0'; // Null terminate the string to ensure it is a valid C string.  
+
+
+parse_atoms
+This function reads atoms from a file, which are structures in formats like MP4.
+It reads the size and type of each atom, prints them, and skips to the next atom.
+till it reach the end of the file or an invalid atom size.
+   Loops until end of file
+        For each atom:
+        Records starting position (pos)
+        Reads size (first 4 bytes)
+        Checks for minimum valid size (8 bytes = size + type)
+        Reads type (next 4 bytes)
+        Prints atom information
+        Skips the remaining atom content (size - 8 bytes)   
